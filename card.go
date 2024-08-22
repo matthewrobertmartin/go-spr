@@ -1,27 +1,26 @@
 package main
 
 import (
-	"image/color"
-
 	"github.com/hajimehoshi/ebiten/v2"
+	"image/color"
 )
 
 // Card represents a card in the game
 type Card struct {
-	Type  int
-	Color color.Color
-	X, Y  float64
+	Type          int
+	Color         color.Color
+	Width, Height int
 }
 
 // Constants for card types
 const (
-	Rock = iota
-	Paper
-	Scissors
+	Rock     = 0
+	Paper    = 1
+	Scissors = 2
 )
 
 // NewCard creates a new card with a specific type and position
-func NewCard(cardType int, x, y float64) Card {
+func NewCard(cardType int) Card {
 	var cardColor color.Color
 	switch cardType {
 	case Rock:
@@ -32,26 +31,21 @@ func NewCard(cardType int, x, y float64) Card {
 		cardColor = color.RGBA{R: 255, G: 0, B: 0, A: 255} // Red color
 	}
 	return Card{
-		Type:  cardType,
-		Color: cardColor,
-		X:     x,
-		Y:     y,
+		Type:   cardType,
+		Color:  cardColor,
+		Width:  100,
+		Height: 150,
 	}
 }
 
-// Draw draws the card on the screen
-func (c *Card) Draw(screen *ebiten.Image) {
-	// Define the size of the card
-	cardWidth, cardHeight := 100, 150
-
-	// Create an image for the card
-	cardImage := ebiten.NewImage(cardWidth, cardHeight)
+func (c *Card) Draw(screen *ebiten.Image, coord Coordinate) {
+	cardImage := ebiten.NewImage(c.Width, c.Height)
 
 	// Fill the card image with the card's color
 	cardImage.Fill(c.Color)
 
 	// Draw the card image onto the screen at the specified position
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(c.X, c.Y)
+	op.GeoM.Translate(float64(coord.x), float64(coord.y))
 	screen.DrawImage(cardImage, op)
 }
